@@ -1,0 +1,86 @@
+{% extends "base.html" %}
+{% block title %}ЕГЭ Тренажёр{% endblock %}
+{% block content %}
+<main class="landing-simple">
+  <header class="landing-simple-header">
+    <a href="/py/" class="landing-simple-brand">ЕГЭ Тренажёр</a>
+    <div class="landing-simple-auth">
+      <button class="theme-toggle landing-theme-toggle" type="button" data-theme-toggle>
+        <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+        <span class="theme-toggle-label">Тёмная тема</span>
+      </button>
+      <a href="/py/login?tab=login" class="landing-simple-login">Войти</a>
+      <a href="/py/register" class="btn btn-primary">Регистрация</a>
+    </div>
+  </header>
+  <div class="landing-simple-content">
+    <section class="landing-hero">
+      <div class="landing-hero-copy">
+        <p class="landing-simple-badge">ПОДГОТОВКА К ЕГЭ · 2026</p>
+        <h1>Готовься<br>по плану.<br><span>Сдавай увереннее.</span></h1>
+        <p class="landing-simple-lead">Задания, пробные экзамены и разбор ошибок — в одном месте. Выбирай предмет и занимайся в своём темпе.</p>
+        <div class="landing-simple-actions">
+          <a href="/py/register" class="btn btn-primary btn-lg landing-simple-start">Начать подготовку <span aria-hidden="true">→</span></a>
+          <a href="/py/login?tab=login" class="landing-hero-login">Уже есть аккаунт? Войти</a>
+        </div>
+      </div>
+
+      <aside class="landing-subject-board" aria-label="Предметы для подготовки">
+        <div class="landing-board-heading">
+          <div>
+            <p>ВЫБЕРИ НАПРАВЛЕНИЕ</p>
+            <h2>Четыре предмета.<br>Один понятный план.</h2>
+          </div>
+          <span class="landing-board-count">04</span>
+        </div>
+        <div class="landing-subject-list">
+          {% for sid, subj in subjects.items() %}
+          <div class="landing-subject-row">
+            <span class="landing-subject-number">{{ '%02d'|format(loop.index) }}</span>
+            <div>
+              <strong>{{ subj.title }}</strong>
+              <span>{{ subj.description }}</span>
+            </div>
+            <span class="landing-subject-arrow" aria-hidden="true">↗</span>
+          </div>
+          {% endfor %}
+        </div>
+        <div class="landing-board-foot">Математика&nbsp; / &nbsp;Русский&nbsp; / &nbsp;Физика&nbsp; / &nbsp;Информатика</div>
+      </aside>
+    </section>
+
+    <section class="landing-features-section" aria-labelledby="landing-features-title">
+      <div class="landing-features-heading">
+        <div>
+          <p>ВСЁ ДЛЯ ПОДГОТОВКИ</p>
+          <h2 id="landing-features-title">Занимайся так, как удобно тебе</h2>
+        </div>
+        <span>Четыре инструмента — одна цель: готовность к экзамену.</span>
+      </div>
+      <div class="landing-simple-modes">
+        <article>
+          <span class="landing-mode-index">01</span>
+          <h3>Тренировка</h3>
+          <p>Решай задания по темам и сразу разбирай ответы.</p>
+        </article>
+        <article>
+          <span class="landing-mode-index">02</span>
+          <h3>Пробный экзамен</h3>
+          <p>Проверь знания в формате экзамена и следи за временем.</p>
+        </article>
+        <article>
+          <span class="landing-mode-index">03</span>
+          <h3>Адаптивный режим</h3>
+          <p>Закрепляй темы и выбирай задания для практики.</p>
+        </article>
+        <article>
+          <span class="landing-mode-index">04</span>
+          <h3>Результаты и ошибки</h3>
+          <p>Возвращайся к сложным вопросам и отслеживай свой прогресс.</p>
+        </article>
+      </div>
+    </section>
+  </div>
+  <footer class="landing-simple-copy">© 2026 ЕГЭ Тренажёр</footer>
+</main>
+{% endblock %}

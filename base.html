@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <link rel="icon" type="image/svg+xml" href="/py/static/favicon.svg">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}ЕГЭ Тренажёр{% endblock %}</title>
+  <meta name="description" content="Подготовка к ЕГЭ: задания по четырём предметам, тренировки, учебные экзамены и статистика результатов.">
+  <script>
+    (function () {
+      var theme = 'light';
+      try {
+        if (localStorage.getItem('ege-trainer-theme') === 'dark') theme = 'dark';
+      } catch (e) {}
+      document.documentElement.setAttribute('data-theme', theme);
+    })();
+  </script>
+  <link rel="stylesheet" href="/py/static/css/style.css">
+  <script>
+    window.csrfToken = {{ csrf_token() | tojson }};
+    (function () {
+      var originalFetch = window.fetch;
+      window.fetch = function (input, options) {
+        var url = new URL(input instanceof Request ? input.url : String(input), location.href);
+        var settings = Object.assign({}, options || {});
+        var method = String(settings.method || (input instanceof Request ? input.method : 'GET')).toUpperCase();
+        if (url.origin === location.origin && !['GET','HEAD','OPTIONS'].includes(method)) {
+          var headers = new Headers(settings.headers || (input instanceof Request ? input.headers : undefined));
+          headers.set('X-CSRFToken', window.csrfToken);
+          settings.headers = headers;
+        }
+        return originalFetch.call(window, input, settings);
+      };
+    })();
+  </script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+</head>
+<body>
+{% if user %}
+<nav class="navbar" aria-label="Основная навигация">
+  {% set p = request.path %}
+  <a href="/py/" class="navbar-brand"><span>ЕГЭ Тренажёр</span></a>
+  <button class="navbar-toggle" type="button" data-nav-toggle aria-expanded="false" aria-controls="navbar-menu" aria-label="Открыть меню">
+    <span class="navbar-toggle-bars" aria-hidden="true"><i></i><i></i><i></i></span>
+    <span class="navbar-toggle-text">Меню</span>
+  </button>
+  <div class="navbar-menu" id="navbar-menu" data-nav-menu>
+    <div class="navbar-links">
+      <a href="/py/"{% if p in ['/py', '/py/'] %} class="is-active" aria-current="page"{% endif %}>Предметы</a>
+      {% if user.is_teacher and not user.is_admin %}
+      <a href="/py/admin/essays" class="navbar-link-role{% if p.startswith('/py/admin/essays') %} is-active{% endif %}"{% if p.startswith('/py/admin/essays') %} aria-current="page"{% endif %}>Проверка сочинений</a>
+      {% endif %}
+      <a href="/py/analytics"{% if p.startswith('/py/analytics') %} class="is-active" aria-current="page"{% endif %}>Аналитика</a>
+      <a href="/py/mistakes"{% if p.startswith('/py/mistakes') %} class="is-active" aria-current="page"{% endif %}>Мои ошибки</a>
+      {% if not user.is_admin %}<a href="/py/my-essays"{% if p.startswith('/py/my-essays') %} class="is-active" aria-current="page"{% endif %}>Мои сочинения</a>{% endif %}
+      <a href="/py/arguments"{% if p.startswith('/py/arguments') %} class="is-active" aria-current="page"{% endif %}>Банк аргументов</a>
+      <a href="/py/news"{% if p.startswith('/py/news') %} class="is-active" aria-current="page"{% endif %}>Новости</a>
+      <a href="{{ '/py/admin/support' if user.is_admin else '/py/support' }}"{% if p.startswith('/py/support') or p.startswith('/py/admin/support') %} class="is-active" aria-current="page"{% endif %}>Поддержка</a>
+      <a href="/py/leaderboard"{% if p.startswith('/py/leaderboard') %} class="is-active" aria-current="page"{% endif %}>Рейтинг</a>
+      <a href="/py/profile"{% if p.startswith('/py/profile') %} class="is-active" aria-current="page"{% endif %}>Профиль</a>
+      {% if user.is_admin %}
+      <a href="/py/admin" class="navbar-link-role{% if p.startswith('/py/admin') and not p.startswith('/py/admin/support') %} is-active{% endif %}">Админ</a>
+      {% endif %}
+    </div>
+    <div class="navbar-user">
+      <button class="theme-toggle" type="button" data-theme-toggle>
+        <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+        <span class="theme-toggle-label">Тёмная тема</span>
+      </button>
+      <span class="xp-badge">{{ user.xp }} XP</span>
+      <span class="navbar-username">{{ user.name }}</span>
+      <form method="post" action="/py/logout"><button class="btn-logout" type="submit">Выйти</button></form>
+    </div>
+  </div>
+</nav>
+{% elif request.path not in ['/py', '/py/'] %}
+<button class="theme-toggle theme-toggle-floating" type="button" data-theme-toggle>
+  <span class="theme-toggle-icon" aria-hidden="true">☾</span>
+  <span class="theme-toggle-label">Тёмная тема</span>
+</button>
+{% endif %}
+{% block content %}{% endblock %}
+<script src="/py/static/js/theme.js"></script>
+<script src="/py/static/js/app.js"></script>
+{% block scripts %}{% endblock %}
+</body>
+</html>

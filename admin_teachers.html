@@ -1,0 +1,59 @@
+{% extends 'base.html' %}
+{% block title %}Учителя — ЕГЭ Тренажёр{% endblock %}
+{% block content %}
+<main class="container">
+  <a href="/py/admin" class="back-link">← Панель администратора</a>
+  <h1 class="page-title">Учителя</h1>
+  <p class="page-subtitle">Учитель может проверять все отправленные сочинения ЕГЭ и итоговые сочинения. Управление пользователями, новостями и поддержкой остаётся у администратора.</p>
+  {% if error %}<div class="alert alert-error" role="alert">{{ error }}</div>{% endif %}
+  {% if success %}<div class="alert" role="status">{{ success }}</div>{% endif %}
+  <div class="teacher-admin-grid">
+    <section class="card">
+      <h2>Выдать роль</h2>
+      <p class="page-subtitle">Для пользователя, который уже зарегистрирован на сайте.</p>
+      <form method="post">
+        <input type="hidden" name="action" value="grant">
+        <div class="form-group">
+          <label class="form-label" for="grant-email">Email пользователя</label>
+          <input class="form-input" type="email" id="grant-email" name="email" required maxlength="254" autocomplete="off">
+        </div>
+        <button class="btn btn-primary" type="submit">Назначить учителем</button>
+      </form>
+    </section>
+    <section class="card">
+      <h2>Добавить учителя</h2>
+      <p class="page-subtitle">Создайте новый аккаунт с доступом к проверке работ.</p>
+      <form method="post">
+        <input type="hidden" name="action" value="create">
+        <div class="form-group">
+          <label class="form-label" for="teacher-name">Имя</label>
+          <input class="form-input" id="teacher-name" name="name" required minlength="2" maxlength="100" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="teacher-email">Email</label>
+          <input class="form-input" type="email" id="teacher-email" name="email" required maxlength="254" autocomplete="off">
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="teacher-password">Пароль</label>
+          <input class="form-input" type="password" id="teacher-password" name="password" required minlength="8" maxlength="72" autocomplete="new-password">
+          <small>Не используйте свой пароль. Передайте данные для входа учителю лично.</small>
+        </div>
+        <button class="btn btn-primary" type="submit">Создать аккаунт учителя</button>
+      </form>
+    </section>
+  </div>
+  <section class="card teacher-list">
+    <h2>Учителя сайта</h2>
+    {% for teacher in teachers %}
+    <div class="teacher-row">
+      <div><strong>{{ teacher.name }}</strong><div class="teacher-email">{{ teacher.email }}</div></div>
+      <form method="post">
+        <input type="hidden" name="action" value="revoke">
+        <input type="hidden" name="email" value="{{ teacher.email }}">
+        <button class="btn btn-outline" type="submit">Снять роль учителя</button>
+      </form>
+    </div>
+    {% else %}<p class="page-subtitle">Учителя пока не добавлены.</p>{% endfor %}
+  </section>
+</main>
+{% endblock %}
